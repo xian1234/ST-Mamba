@@ -23,6 +23,7 @@ Our core contribution lies in the design of the Decoder. As shown in the figure 
 ![Methodology Diagram](method.png)
 
 ## 📦 Repository Structure
+```
 ├── README.md                   # This file: project overview, installation, usage, and more
 ├── models/                     # Model architectures for spatio-temporal segmentation
 │   ├── __init__.py             # Package initializer for importing models
@@ -44,7 +45,7 @@ Our core contribution lies in the design of the Decoder. As shown in the figure 
     ├── splits/                 # Original train/val/test splits
     ├── labels/                 # Label patches (.npy files)
     └── splits_balanced/        # Output directory for balanced splits
-
+```
 ### Core Script Descriptions
 
 * **`config.py`**: rovides a function to retrieve configuration parameters, such as directory paths, balancing ratio, and number of workers.
