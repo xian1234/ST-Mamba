@@ -23,18 +23,44 @@ Our core contribution lies in the design of the Decoder. As shown in the figure 
 ![Methodology Diagram](method.png)
 
 ## 📦 Repository Structure
-. ├── method.png # The methodology diagram ├── models.py # Contains all neural network architectures ├── train_parally.py # DDP (multi-GPU) training script ├── balance_sample.py # (Preprocessing) Script for dataset balancing ├── data_process.py # (Not provided) Should contain the Dataset class ├── requirements.txt # (Recommended) Dependency list └── README.md # This README file
+├── README.md                   # This file: project overview, installation, usage, and more
+├── models/                     # Model architectures for spatio-temporal segmentation
+│   ├── __init__.py             # Package initializer for importing models
+│   ├── unet.py                 # Standard U-Net model
+│   ├── unet3d.py               # 3D U-Net with (2+1)D convolutions
+│   ├── convgru_unet.py         # U-Net with ConvGRU for temporal modeling
+│   ├── convlstm_unet.py        # U-Net with ConvLSTM for temporal modeling (ViT integration placeholder)
+│   ├── st_bigru.py             # Spatio-Temporal BiGRU model (ST-BiGRU)
+│   └── st_mamba.py             # Spatio-Temporal Mamba model (ST-Mamba)
+├── data_process/               # Scripts for dataset balancing and preprocessing
+│   ├── __init__.py             # Package initializer for data processing utilities
+│   ├── config.py               # Configuration settings for directories and hyperparameters
+│   ├── split_loader.py         # Loads original dataset splits
+│   ├── patch_classifier.py     # Classifies patches as positive/negative using multiprocessing
+│   ├── balancer.py             # Balances samples based on negative-to-positive ratio
+│   ├── split_saver.py          # Saves balanced splits to new files
+│   └── main.py                 # Main script to run the balancing process for all splits
+└── preprocessed_dataset/       # Placeholder for dataset (not included; user-provided)
+    ├── splits/                 # Original train/val/test splits
+    ├── labels/                 # Label patches (.npy files)
+    └── splits_balanced/        # Output directory for balanced splits
 
 ### Core Script Descriptions
 
-* **`models.py`**: Defines the key models compared in this paper:
-    * **`SpatioTemporalFusion`** (aliased as `SpatioTemporalModel` in `train_parally.py`): **Our core model**. Implements the decoupled decoder described above. The temporal module can be selected via the `temporal_module` argument (`'gru'` or `'mamba'`).
-    * **`BaselineUNet`**: A baseline model. A standard 2D U-Net that simply concatenates all timesteps in the channel dimension (i.e., `(B, T*C, H, W)`).
-    * **`UNet3D`**: A baseline model. A 3D U-Net using (2+1)D convolutions that processes spacetime simultaneously.
+* **`config.py`**: rovides a function to retrieve configuration parameters, such as directory paths, balancing ratio, and number of workers.
 
 * **`train_parally.py`**: The main training file. It uses PyTorch DDP (`DistributedDataParallel`) for efficient multi-GPU training. It handles data loading, model initialization, and the training/validation loops.
 
-* **`balance_sample.py`**: A utility script to address the extreme class imbalance in segmentation tasks. It analyzes all data patches and down-samples the negative samples (all background) by a fixed ratio (`NEGATIVE_TO_POSITIVE_RATIO`) to create a more balanced training set.
+* **`split_loader.py`**: Loads basenames from original split files (e.g., train.txt) for processing.
+
+* **`patch_classifier.py`**: Classifies label patches into positive (containing heritage elements) and negative (background-only) using parallel processing with concurrent futures.
+  
+* **`balancer.py`**: Downsamples negative patches to achieve the desired negative-to-positive ratio and shuffles the combined list.
+  
+* **`split_saver.py`**: Writes the balanced list of basenames to new split files.
+  
+* **`main.py`**: Orchestrates the balancing pipeline for train/val/test sets, calling the above utilities in sequence.
+
 
 ## 🚀 How to Use
 
