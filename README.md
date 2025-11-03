@@ -1,10 +1,12 @@
 # ST-Mamba
 
-**Short Description:** Official PyTorch implementation for the paper (under submission): *Decoupling Static Context and Dynamic Change: A Spatio-Temporal Decoder with Time-Averaged Priors for Multi-Decadal Monitoring*. This project provides a novel spatio-temporal segmentation architecture that decouples long-term dynamic priors (from all timesteps) from high-resolution static context (from the last timestep) for fine-grained time-series monitoring.
+Official PyTorch implementation for the paper (under submission): *Decoupling Static Context and Dynamic Change: A Spatio-Temporal Decoder with Time-Averaged Priors for Multi-Decadal Monitoring*. This project provides a novel spatio-temporal segmentation architecture that decouples long-term dynamic priors (from all timesteps) from high-resolution static context (from the last timestep) for fine-grained time-series monitoring.
 
 ## 📜 Overview
 
 This project aims to perform fine-grained monitoring and segmentation of specific sites using multi-decadal long-term time-series (LTS) remote sensing imagery. The core challenge in processing such LTS data is how to effectively distinguish between the stable spatial background (**Static Context**) and the subtle changes that occur over time (**Dynamic Change**).
+
+![Methodology Diagram](method.png)
 
 We propose a new spatio-temporal segmentation architecture centered on the idea of **decoupling**. Our model (`SpatioTemporalFusion`) uses a special decoder that reconstructs the segmentation map from two independent information streams:
 
@@ -19,8 +21,6 @@ Our core contribution lies in the design of the Decoder. As shown in the figure 
 2.  The bottleneck features from all timesteps are collected and fed into a temporal fusion module (like GRU or Mamba) to generate a single, fused vector $\mathbf{v}_{\text{fused}}$ representing "dynamic change."
 3.  This $\mathbf{v}_{\text{fused}}$ vector is reshaped to serve as the *initial feature map* for the decoder.
 4.  The decoder then upsamples using skip connections from *only the last timestep* ($T_N$), thus combining the high-frequency "static context" with the fused "dynamic prior."
-
-![Methodology Diagram](method.png)
 
 ## 📦 Repository Structure
 ```
